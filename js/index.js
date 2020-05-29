@@ -1,39 +1,121 @@
-let canvas = document.getElementById("canvas");
-let context = canvas.getContext("2d");
-const CANVAS_WIDTH = 1200;
-const CANVAS_HEIGHT = 600;
+let canvas = document.getElementById('canvas');
+let context = canvas.getContext('2d');
 
+let currentLevel = 0;
+let target = [1, 1];
+
+let player, obstacles, coins;
+
+let CANVAS_WIDTH = 1200;
+let CANVAS_HEIGHT = 600;
+let FPS = 60;
+
+let then, now, elapsed, fpsInterval;
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
-const FPS = 60;
-let then, now, fpsInterval, elapsed;
+let setLevel = function(lvl) {
 
+    window.removeEventListener("keydown", controller.KeyListener);
+    window.removeEventListener("keyup", controller.KeyListener);
 
-let player = {
-    width: 32,
-    height: 64,
-    x: 0,
-    y: 100,
-    xVelocity: 0,
-    yVelocity: 0,
-    jumping: true
-};
+    if (lvl === 0) {
+        player = {
+            xPrev: 0,
+            yPrev: 0,
+            width: 32,
+            height: 64,
+            x: 0,
+            y: 0,
+            xVelocity: 0,
+            yVelocity: 0,
+            jumping: true,
+            coins: 0
+        };
+        obstacles = [
+            {
+                width: 100,
+                height: 20,
+                x: 300,
+                y: 500
+            },
+            {
+                width: 100,
+                height: 20,
+                x: 500,
+                y: 400
+            },
+            {
+                width: 100,
+                height: 20,
+                x: 700,
+                y: 300
+            },
+        ];
+        coins = [
+            {
+                width: 25,
+                height: 25,
+                x: 537,
+                y: 360
+            }
+        ];
+    }
 
-let obstacle = {
-    width: 100,
-    height: 20,
-    x: 300,
-    y: 500
-};
+    if (lvl === 1) {
+        player = {
+            xPrev: 0,
+            yPrev: 0,
+            width: 32,
+            height: 64,
+            x: 0,
+            y: 0,
+            xVelocity: 0,
+            yVelocity: 0,
+            jumping: true,
+            coins: 0
+        };
+        obstacles = [
+            {
+                width: 100,
+                height: 20,
+                x: 300,
+                y: 500
+            },
+            {
+                width: 100,
+                height: 20,
+                x: 500,
+                y: 400
+            },
+            {
+                width: 100,
+                height: 20,
+                x: 800,
+                y: 300
+            },
+        ];
+        coins = [
+            {
+                width: 25,
+                height: 25,
+                x: 537,
+                y: 360
+            }
+        ];
+    }
+
+    window.addEventListener("keydown", controller.KeyListener);
+    window.addEventListener("keyup", controller.KeyListener);
+}
 
 let controller = {
     left: false,
     right: false,
     up: false,
-    keyListener: function (evt) {
-        let keyState = (evt.type === 'keydown') ? true : false;
+    KeyListener: function(evt) {
+        let keyState = (evt.type == "keydown") ? true : false;
         switch (evt.keyCode) {
             case 37:
                 controller.left = keyState;
@@ -45,19 +127,18 @@ let controller = {
                 controller.right = keyState;
                 break;
         }
-
     }
-}
+};
 
-let startAnimation = function(FPS) {
-    fpsInterval = 1000 / FPS;
+let startAnimation = function(fps) {
+    setLevel(currentLevel);
+    fpsInterval = 1000 / fps;
     then = window.performance.now();
     animation(then);
-    return then;
 }
 
 let animation = function(newTime) {
-    window.webkitRequestAnimationFrame(animation);
+    window.requestAnimationFrame(animation);
     now = newTime;
     elapsed = now - then;
     if (elapsed > fpsInterval) {
@@ -67,18 +148,51 @@ let animation = function(newTime) {
     }
 }
 
-let isCollided = function(obst, obj){
+let isCollided = function(obst, obj) {
     if (obj.x + obj.width > obst.x
         && obj.x < obst.x + obst.width
-        && obj.y + obst.y + obst.height){
+        && obj.y < obst.y + obst.height
+        && obj.y + obj.height > obst.y) {
         return true;
-    }else {
+    } else {
         return false;
     }
 }
 
-let update = function(){
-    if (controller.up && player.jumping === false){
+let collideHandler = function(obst, obj) {
+    if (isCollided(obst, obj)) {
+        if (obj.xPrev >= obst.x + obst.width) {
+            obj.x = obst.x + obst.width;
+            obj.xVelocity = 0;
+        }
+        if (obj.xPrev + obj.width <= obst.x) {
+            obj.x = obst.x - obj.width;
+            obj.xVelocity = 0;
+        }
+        if (obj.yPrev + obj.height <= obst.y) {
+            obj.y = obst.y - obj.height;
+            obj.yVelocity = 0;
+            obj.jumping = false;
+        }
+        if (obj.yPrev >= obst.y + obst.height) {
+            obj.y = obst.y + obst.height;
+            obj.yVelocity = 0;
+        }
+    }
+}
+
+let coinHandler = function (coin, obj) {
+    if(isCollided(coin, obj)) {
+        player.coins += 1;
+        coin.x = -25;
+    }
+}
+
+let update = function () {
+    player.xPrev = player.x;
+    player.yPrev = player.y;
+
+    if (controller.up && player.jumping === false) {
         player.yVelocity -= 30;
         player.jumping = true;
     }
@@ -94,42 +208,75 @@ let update = function(){
     player.yVelocity += 1.5;
     player.x += player.xVelocity;
     player.y += player.yVelocity;
-    player.yVelocity *= 0.9;
     player.xVelocity *= 0.9;
+    player.yVelocity *= 0.9;
 
-    if (player.x < 0){
+    if (player.x < 0) {
         player.x = 0;
     }
 
-    if (player.x > CANVAS_WIDTH - player.width){
+    if (player.x > CANVAS_WIDTH - player.width) {
         player.x = CANVAS_WIDTH - player.width;
     }
 
-
-    if (player.y > CANVAS_HEIGHT - player.height){
+    if (player.y > CANVAS_HEIGHT - player.height) {
         player.y = CANVAS_HEIGHT - player.height;
         player.yVelocity = 0;
         player.jumping = false;
     }
 
-    if (isCollided(obstacle, player)){
-
+    for (let i = 0; i < obstacles.length; i++) {
+        collideHandler(obstacles[i], player);
     }
+
+    for (let i = 0; i < coins.length; i++) {
+        coinHandler(coins[i], player);
+    }
+
+    if (target[currentLevel] === player.coins) {
+        currentLevel += 1;
+        if (currentLevel < target.length) {
+            setLevel(currentLevel);
+        } else {
+            alert('Игра завершена!');
+            currentLevel = 0;
+            setLevel(currentLevel);
+        }
+    }
+
 }
 
-let draw = function () {
-    context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+let drawObject = function(obj, style) {
+    context.fillStyle = style;
+    context.fillRect(obj.x, obj.y, obj.width, obj.height);
+}
+
+let draw = function() {
+    //фон
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    //игрок
     context.fillStyle = '#000000';
     context.fillRect(player.x, player.y, player.width, player.height);
-    context.fillStyle = '#00ff00';
-    context.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-};
+
+    //препятствия
+    for (let i = 0; i < obstacles.length; i++) {
+        drawObject(obstacles[i], '#00ff00');
+    }
+
+    //монетки
+    for (let i = 0; i < coins.length; i++) {
+        drawObject(coins[i], '#eac448');
+    }
+
+    //количество монеток
+    context.fillStyle = '#0000ff';
+    context.font = 'normal 30px Arial';
+    context.fillText(player.coins, 20, 50);
+}
 
 startAnimation(FPS);
-
-window.addEventListener('keydown', controller.keyListener);
-window.addEventListener('keyup', controller.keyListener);
-
 
 
 
