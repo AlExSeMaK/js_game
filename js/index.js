@@ -2,15 +2,20 @@ let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
 let currentLevel = 0;
-let target = [1, 1];
+let target = [2, 1];
 
 let player, obstacles, coins;
 
 let CANVAS_WIDTH = 1200;
 let CANVAS_HEIGHT = 600;
+
 let FPS = 60;
 
 let then, now, elapsed, fpsInterval;
+
+let dangerImg = new Image();
+dangerImg.src = './images/danger.png'
+
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
@@ -73,9 +78,18 @@ let setLevel = function(lvl) {
                 width: 32,
                 height: 64,
                 x: 735,
-                y: 500
+                y: 200
             }
+        ];
+        danger = [
+            {
+                width: 100,
+                height: 20,
+                x: 600,
+                y: 400
+            },
         ]
+
     }
 
 
@@ -118,12 +132,20 @@ let setLevel = function(lvl) {
                 width: 25,
                 height: 25,
                 x: 537,
-                y: 360
+                y: 460
             }
         ];
+        danger = [
+            {
+                width: 100,
+                height: 20,
+                x: 200,
+                y: 400
+            },
+        ]
 
     }
-
+    console.log(danger.x)
     window.addEventListener("keydown", controller.KeyListener);
     window.addEventListener("keyup", controller.KeyListener);
 }
@@ -208,9 +230,15 @@ let coinHandler = function (coin, obj) {
 
 let portalHandler = function (portal, obj) {
     if(isCollided(portal, obj)) {
-        portal.x = -50;
-        console.log(player.portal);
         return player.portal += 1;
+    }
+}
+
+let dangerHandler = function (danger, obj) {
+    if(isCollided(danger, obj)) {
+        alert('Игра проиграна');
+        currentLevel = 0;
+        setLevel(currentLevel);
     }
 }
 
@@ -263,6 +291,9 @@ let update = function () {
         portalHandler(portal[i], player);
     }
 
+    for (let i = 0; i < danger.length; i++) {
+        dangerHandler(danger[i], player);
+    }
 
 
     if (target[currentLevel] === player.portal) {
@@ -284,34 +315,34 @@ let drawObject = function(obj, style) {
 }
 
 let draw = function() {
-    //фон
-    context.fillStyle = '#ffffff';
-    context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    //игрок
     context.fillStyle = '#000000';
     context.fillRect(player.x, player.y, player.width, player.height);
 
-    //препятствия
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#00ff00');
     }
 
-    //монетки
     for (let i = 0; i < coins.length; i++) {
         drawObject(coins[i], '#eac448');
     }
 
-    //количество монеток
     context.fillStyle = '#0000ff';
     context.font = 'normal 30px Arial';
     context.fillText(player.coins, 20, 50);
 
-    if (player.coins === 2) {
+    if (player.coins === target[currentLevel]) {
         for (let i = 0; i < portal.length; i++) {
             drawObject(portal[i], '#eac448');
         }
     }
+    for (let i = 0; i < danger.length; i++) {
+        drawObject(danger[i], '#eee');
+        context.drawImage(dangerImg, danger[i].x, danger[i].y - 15, danger[i].width, danger[i].height + 15);
+    }
+
+
 }
 
 startAnimation(FPS);
