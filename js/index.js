@@ -1,7 +1,7 @@
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
-const CANVAS_WIDTH = 600;
-const CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 1200;
+const CANVAS_HEIGHT = 600;
 
 
 canvas.width = CANVAS_WIDTH;
@@ -13,12 +13,19 @@ let then, now, fpsInterval, elapsed;
 
 let player = {
     width: 32,
-    high: 64,
+    height: 64,
     x: 0,
     y: 100,
     xVelocity: 0,
     yVelocity: 0,
     jumping: true
+};
+
+let obstacle = {
+    width: 100,
+    height: 20,
+    x: 300,
+    y: 500
 };
 
 let controller = {
@@ -55,11 +62,22 @@ let animation = function(newTime) {
     elapsed = now - then;
     if (elapsed > fpsInterval) {
         then = now - (elapsed % fpsInterval);
+        update();
         draw();
     }
 }
 
-let draw = function () {
+let isCollided = function(obst, obj){
+    if (obj.x + obj.width > obst.x
+        && obj.x < obst.x + obst.width
+        && obj.y + obst.y + obst.height){
+        return true;
+    }else {
+        return false;
+    }
+}
+
+let update = function(){
     if (controller.up && player.jumping === false){
         player.yVelocity -= 30;
         player.jumping = true;
@@ -88,14 +106,23 @@ let draw = function () {
     }
 
 
-    if (player.y > CANVAS_HEIGHT - player.high){
-        player.y = CANVAS_HEIGHT - player.high;
+    if (player.y > CANVAS_HEIGHT - player.height){
+        player.y = CANVAS_HEIGHT - player.height;
         player.yVelocity = 0;
         player.jumping = false;
     }
+
+    if (isCollided(obstacle, player)){
+
+    }
+}
+
+let draw = function () {
     context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     context.fillStyle = '#000000';
-    context.fillRect(player.x, player.y, player.width, player.high);
+    context.fillRect(player.x, player.y, player.width, player.height);
+    context.fillStyle = '#00ff00';
+    context.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 };
 
 startAnimation(FPS);
