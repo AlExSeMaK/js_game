@@ -31,7 +31,8 @@ let setLevel = function(lvl) {
             xVelocity: 0,
             yVelocity: 0,
             jumping: true,
-            coins: 0
+            coins: 0,
+            portal: 0
         };
         obstacles = [
             {
@@ -59,9 +60,24 @@ let setLevel = function(lvl) {
                 height: 25,
                 x: 537,
                 y: 360
+            },
+            {
+                width: 25,
+                height: 25,
+                x: 737,
+                y: 460
             }
         ];
+        portal = [
+            {
+                width: 32,
+                height: 64,
+                x: 735,
+                y: 500
+            }
+        ]
     }
+
 
     if (lvl === 1) {
         player = {
@@ -74,7 +90,8 @@ let setLevel = function(lvl) {
             xVelocity: 0,
             yVelocity: 0,
             jumping: true,
-            coins: 0
+            coins: 0,
+            portal: 0
         };
         obstacles = [
             {
@@ -104,6 +121,7 @@ let setLevel = function(lvl) {
                 y: 360
             }
         ];
+
     }
 
     window.addEventListener("keydown", controller.KeyListener);
@@ -188,6 +206,14 @@ let coinHandler = function (coin, obj) {
     }
 }
 
+let portalHandler = function (portal, obj) {
+    if(isCollided(portal, obj)) {
+        portal.x = -50;
+        console.log(player.portal);
+        return player.portal += 1;
+    }
+}
+
 let update = function () {
     player.xPrev = player.x;
     player.yPrev = player.y;
@@ -233,7 +259,13 @@ let update = function () {
         coinHandler(coins[i], player);
     }
 
-    if (target[currentLevel] === player.coins) {
+    for (let i = 0; i < portal.length; i++) {
+        portalHandler(portal[i], player);
+    }
+
+
+
+    if (target[currentLevel] === player.portal) {
         currentLevel += 1;
         if (currentLevel < target.length) {
             setLevel(currentLevel);
@@ -274,6 +306,12 @@ let draw = function() {
     context.fillStyle = '#0000ff';
     context.font = 'normal 30px Arial';
     context.fillText(player.coins, 20, 50);
+
+    if (player.coins === 2) {
+        for (let i = 0; i < portal.length; i++) {
+            drawObject(portal[i], '#eac448');
+        }
+    }
 }
 
 startAnimation(FPS);
