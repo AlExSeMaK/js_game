@@ -16,9 +16,19 @@ let then, now, elapsed, fpsInterval;
 let dangerImg = new Image();
 dangerImg.src = './images/danger.png'
 
+let darkPortal = new Image();
+darkPortal.src = './images/portal.png'
+
+let bitcoin = new Image();
+bitcoin.src = './images/bitcoin.png'
+
+let vertdanger = new Image();
+vertdanger.src = './images/vertdanger.png'
+
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
+
 
 let setLevel = function(lvl) {
 
@@ -32,7 +42,7 @@ let setLevel = function(lvl) {
             width: 32,
             height: 64,
             x: 0,
-            y: 0,
+            y: 750,
             xVelocity: 0,
             yVelocity: 0,
             jumping: true,
@@ -41,42 +51,54 @@ let setLevel = function(lvl) {
         };
         obstacles = [
             {
-                width: 100,
+                width: 800,
                 height: 20,
                 x: 300,
                 y: 500
             },
             {
-                width: 100,
+                width: 300,
                 height: 20,
-                x: 500,
+                x: 300,
                 y: 400
             },
             {
-                width: 100,
+                width: 300,
                 height: 20,
                 x: 700,
                 y: 300
             },
+            {
+                width: 20,
+                height: 200,
+                x: 700,
+                y: 100
+            },
+            {
+                width: 300,
+                height: 20,
+                x: 0,
+                y: 400
+            },
         ];
         coins = [
             {
-                width: 25,
-                height: 25,
+                width: 35,
+                height: 35,
                 x: 537,
                 y: 360
             },
             {
-                width: 25,
-                height: 25,
+                width: 35,
+                height: 35,
                 x: 737,
                 y: 460
             }
         ];
         portal = [
             {
-                width: 32,
-                height: 64,
+                width: 70,
+                height: 100,
                 x: 735,
                 y: 200
             }
@@ -86,6 +108,14 @@ let setLevel = function(lvl) {
                 width: 100,
                 height: 20,
                 x: 600,
+                y: 400
+            },
+        ];
+        Vdanger = [
+            {
+                width: 20,
+                height: 100,
+                x: 300,
                 y: 400
             },
         ]
@@ -129,8 +159,8 @@ let setLevel = function(lvl) {
         ];
         coins = [
             {
-                width: 25,
-                height: 25,
+                width: 35,
+                height: 35,
                 x: 537,
                 y: 460
             }
@@ -142,7 +172,15 @@ let setLevel = function(lvl) {
                 x: 200,
                 y: 400
             },
-        ]
+        ];
+        portal = [
+            {
+                width: 70,
+                height: 100,
+                x: 735,
+                y: 200
+            }
+        ];
 
     }
     console.log(danger.x)
@@ -224,7 +262,7 @@ let collideHandler = function(obst, obj) {
 let coinHandler = function (coin, obj) {
     if(isCollided(coin, obj)) {
         player.coins += 1;
-        coin.x = -25;
+        coin.x = -50;
     }
 }
 
@@ -236,6 +274,14 @@ let portalHandler = function (portal, obj) {
 
 let dangerHandler = function (danger, obj) {
     if(isCollided(danger, obj)) {
+        alert('Игра проиграна');
+        currentLevel = 0;
+        setLevel(currentLevel);
+    }
+}
+
+let VdangerHandler = function (Vdanger, obj) {
+    if(isCollided(Vdanger, obj)) {
         alert('Игра проиграна');
         currentLevel = 0;
         setLevel(currentLevel);
@@ -295,13 +341,17 @@ let update = function () {
         dangerHandler(danger[i], player);
     }
 
+    for (let i = 0; i < Vdanger.length; i++) {
+        VdangerHandler(Vdanger[i], player);
+    }
+
 
     if (target[currentLevel] === player.portal) {
         currentLevel += 1;
         if (currentLevel < target.length) {
             setLevel(currentLevel);
         } else {
-            alert('Игра завершена!');
+            alert('Вы выиграли')
             currentLevel = 0;
             setLevel(currentLevel);
         }
@@ -325,7 +375,8 @@ let draw = function() {
     }
 
     for (let i = 0; i < coins.length; i++) {
-        drawObject(coins[i], '#eac448');
+        drawObject(coins[i], '#75bbfd');
+        context.drawImage(bitcoin, coins[i].x, coins[i].y, coins[i].width, coins[i].height);
     }
 
     context.fillStyle = '#0000ff';
@@ -334,14 +385,19 @@ let draw = function() {
 
     if (player.coins === target[currentLevel]) {
         for (let i = 0; i < portal.length; i++) {
-            drawObject(portal[i], '#eac448');
+            drawObject(portal[i], '#75bbfd');
+            context.drawImage(darkPortal, portal[i].x, portal[i].y, portal[i].width, portal[i].height);
         }
     }
     for (let i = 0; i < danger.length; i++) {
-        drawObject(danger[i], '#eee');
+        drawObject(danger[i], '#75bbfd');
         context.drawImage(dangerImg, danger[i].x, danger[i].y - 15, danger[i].width, danger[i].height + 15);
     }
 
+    for (let i = 0; i < Vdanger.length; i++) {
+        drawObject(Vdanger[i], '#75bbfd');
+        context.drawImage(vertdanger, Vdanger[i].x, Vdanger[i].y - 15, Vdanger[i].width, Vdanger[i].height + 15);
+    }
 
 }
 
