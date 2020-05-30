@@ -2,7 +2,7 @@ let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
 let currentLevel = 0;
-let target = [2, 1];
+let target = [9, 1];
 
 let player, obstacles, coins;
 
@@ -40,9 +40,9 @@ let setLevel = function(lvl) {
             xPrev: 0,
             yPrev: 0,
             width: 32,
-            height: 64,
+            height: 50,
             x: 0,
-            y: 750,
+            y: 500,
             xVelocity: 0,
             yVelocity: 0,
             jumping: true,
@@ -54,12 +54,12 @@ let setLevel = function(lvl) {
                 width: 800,
                 height: 20,
                 x: 300,
-                y: 500
+                y: 480
             },
             {
-                width: 300,
+                width: 200,
                 height: 20,
-                x: 300,
+                x: 400,
                 y: 400
             },
             {
@@ -72,13 +72,55 @@ let setLevel = function(lvl) {
                 width: 20,
                 height: 200,
                 x: 700,
-                y: 100
+                y: 120
             },
             {
                 width: 300,
                 height: 20,
                 x: 0,
                 y: 400
+            },
+            {
+                width: 300,
+                height: 20,
+                x: 80,
+                y: 300
+            },
+            {
+                width: 50,
+                height: 20,
+                x: 0,
+                y: 200
+            },
+            {
+                width: 570,
+                height: 20,
+                x: 150,
+                y: 100
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 400,
+                y: 200
+            },
+            {
+                width: 50,
+                height: 20,
+                x: 1000,
+                y: 200
+            },
+            {
+                width: 100,
+                height: 20,
+                x: 1100,
+                y: 100
+            },
+            {
+                width: 1200,
+                height: 20,
+                x: 0,
+                y: 580
             },
         ];
         coins = [
@@ -92,15 +134,57 @@ let setLevel = function(lvl) {
                 width: 35,
                 height: 35,
                 x: 737,
-                y: 460
-            }
+                y: 440
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 240,
+                y: 360
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 150,
+                y: 260
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 480,
+                y: 160
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 0,
+                y: 160
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 270,
+                y: 60
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 720,
+                y: 260
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 1010,
+                y: 160
+            },
         ];
         portal = [
             {
                 width: 70,
                 height: 100,
-                x: 735,
-                y: 200
+                x: 1125,
+                y: 0
             }
         ];
         danger = [
@@ -110,15 +194,21 @@ let setLevel = function(lvl) {
                 x: 600,
                 y: 400
             },
+            {
+                width: 200,
+                height: 20,
+                x: 1000,
+                y: 300
+            },
         ];
         Vdanger = [
             {
                 width: 20,
-                height: 100,
+                height: 80,
                 x: 300,
                 y: 400
             },
-        ]
+        ];
 
     }
 
