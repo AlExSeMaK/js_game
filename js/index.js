@@ -25,6 +25,8 @@ bitcoin.src = './images/bitcoin.png'
 let vertdanger = new Image();
 vertdanger.src = './images/vertdanger.png'
 
+let ground = new Image();
+ground.src = './images/images.jpg'
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
@@ -273,7 +275,6 @@ let setLevel = function(lvl) {
         ];
 
     }
-    console.log(danger.x)
     window.addEventListener("keydown", controller.KeyListener);
     window.addEventListener("keyup", controller.KeyListener);
 }
@@ -461,7 +462,8 @@ let draw = function() {
     context.fillRect(player.x, player.y, player.width, player.height);
 
     for (let i = 0; i < obstacles.length; i++) {
-        drawObject(obstacles[i], '#00ff00');
+        drawObject(obstacles[i], '#654321');
+        context.drawImage(ground, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
     }
 
     for (let i = 0; i < coins.length; i++) {
