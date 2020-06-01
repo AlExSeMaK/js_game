@@ -12,8 +12,6 @@ let then, now, elapsed, fpsInterval;
 let lives = 3;
 let num = 0;
 
-
-
 let dangerImg = new Image();
 dangerImg.src = './images/danger.png';
 let darkPortal = new Image();
@@ -672,7 +670,6 @@ function update() {
         horizontalMoveDangerHandler(horizontalMoveDanger[i], player);
     }
 
-
     if (target[currentLevel] === player.portal) {
         currentLevel += 1;
         if (currentLevel < target.length) {
@@ -718,9 +715,6 @@ function draw() {
     }
 
     spriteMove(spriteList, num);
-
-
-
 
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#654321');
