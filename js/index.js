@@ -450,8 +450,8 @@ function setLevel(lvl) {
             {
                 width: 50,
                 height: 50,
-                x: 300,
-                y: 400
+                x: 945,
+                y: 528
             }
         ];
 
