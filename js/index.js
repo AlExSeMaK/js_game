@@ -692,7 +692,7 @@ function draw() {
 
     context.fillStyle = '#75bbfd';
     context.fillRect(player.x, player.y, player.width, player.height);
-    context.drawImage(sprite, player.x, player.y, player.width + 20, player.height + 10);
+    context.drawImage(sprite, player.x, player.y, player.width, player.height);
 
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#654321');
