@@ -2,9 +2,9 @@ let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
 let currentLevel = 0;
-let target = [9, 1];
+let target = [9, 8];
 
-let player, obstacles, coins;
+let player, obstacles, coins, heart, portal, danger, verticalDanger, horizontalMoveDanger, verticalMoveDanger;
 
 let CANVAS_WIDTH = 1200;
 let CANVAS_HEIGHT = 600;
@@ -13,30 +13,56 @@ let FPS = 60;
 
 let then, now, elapsed, fpsInterval;
 
+let lives = 3;
+
 let dangerImg = new Image();
-dangerImg.src = './images/danger.png'
+dangerImg.src = './images/danger.png';
 
 let darkPortal = new Image();
-darkPortal.src = './images/portal.png'
+darkPortal.src = './images/portal.png';
 
 let bitcoin = new Image();
-bitcoin.src = './images/bitcoin.png'
+bitcoin.src = './images/bitcoin.png';
 
-let vertdanger = new Image();
-vertdanger.src = './images/vertdanger.png'
+let vertDanger = new Image();
+vertDanger.src = './images/vertdanger.png';
 
 let ground = new Image();
-ground.src = './images/images.jpg'
+ground.src = './images/images.jpg';
+
+let vertMoveDanger = new Image();
+vertMoveDanger.src = './images/VMdangerImg.png';
+
+let heartSprite = new Image();
+heartSprite.src = './images/heart.png';
+
+let sprite = new Image();
+sprite.src = './images/sprite.png';
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
+let controller = {
+    left: false,
+    right: false,
+    up: false,
+    KeyListener: function(evt) {
+        let keyState = (evt.type === "keydown");
+        switch (evt.keyCode) {
+            case 37:
+                controller.left = keyState;
+                break;
+            case 38:
+                controller.up = keyState;
+                break;
+            case 39:
+                controller.right = keyState;
+                break;
+        }
+    }
+};
 
-let setLevel = function(lvl) {
-
-    window.removeEventListener("keydown", controller.KeyListener);
-    window.removeEventListener("keyup", controller.KeyListener);
-
+function setLevel(lvl) {
     if (lvl === 0) {
         player = {
             xPrev: 0,
@@ -49,11 +75,11 @@ let setLevel = function(lvl) {
             yVelocity: 0,
             jumping: true,
             coins: 0,
-            portal: 0
+            portal: 3
         };
         obstacles = [
             {
-                width: 800,
+                width: 600,
                 height: 20,
                 x: 300,
                 y: 480
@@ -65,7 +91,7 @@ let setLevel = function(lvl) {
                 y: 400
             },
             {
-                width: 300,
+                width: 180,
                 height: 20,
                 x: 700,
                 y: 300
@@ -119,9 +145,15 @@ let setLevel = function(lvl) {
                 y: 100
             },
             {
-                width: 1200,
+                width: 900,
                 height: 20,
                 x: 0,
+                y: 580
+            },
+            {
+                width: 250,
+                height: 20,
+                x: 950,
                 y: 580
             },
         ];
@@ -203,13 +235,37 @@ let setLevel = function(lvl) {
                 y: 300
             },
         ];
-        Vdanger = [
+        verticalMoveDanger = [
+            {
+                width: 50,
+                height: 50,
+                x: 900,
+                y: 300
+            }
+        ];
+        horizontalMoveDanger = [
+            {
+                width: 50,
+                height: 50,
+                x: 900,
+                y: 350
+            }
+        ];
+        verticalDanger = [
             {
                 width: 20,
                 height: 80,
                 x: 300,
                 y: 400
             },
+        ];
+        heart = [
+            {
+                width: 50,
+                height: 50,
+                x: 330,
+                y: 420
+            }
         ];
 
     }
@@ -222,55 +278,211 @@ let setLevel = function(lvl) {
             width: 32,
             height: 64,
             x: 0,
-            y: 0,
+            y: 500,
             xVelocity: 0,
             yVelocity: 0,
             jumping: true,
             coins: 0,
-            portal: 0
+            portal: 0,
         };
         obstacles = [
             {
-                width: 100,
+                width: 200,
                 height: 20,
-                x: 300,
-                y: 500
+                x: 0,
+                y: 580
             },
             {
-                width: 100,
+                width: 200,
+                height: 20,
+                x: 250,
+                y: 580
+            },
+            {
+                width: 200,
                 height: 20,
                 x: 500,
-                y: 400
+                y: 580
             },
             {
-                width: 100,
+                width: 500,
+                height: 20,
+                x: 750,
+                y: 580
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 0,
+                y: 280
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 250,
+                y: 480
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 500,
+                y: 420
+            },
+            {
+                width: 200,
                 height: 20,
                 x: 800,
-                y: 300
+                y: 350
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 800,
+                y: 100
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 750,
+                y: 480
+            },
+            {
+                width: 20,
+                height: 80,
+                x: 1000,
+                y: 100
+            },
+            {
+                width: 20,
+                height: 150,
+                x: 1000,
+                y: 220
+            },
+            {
+                width: 20,
+                height: 160,
+                x: 1000,
+                y: 420
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 250,
+                y: 350
+            },
+            {
+                width: 150,
+                height: 20,
+                x: 300,
+                y: 220
+            },
+            {
+                width: 200,
+                height: 20,
+                x: 500,
+                y: 150
             },
         ];
         coins = [
             {
                 width: 35,
                 height: 35,
-                x: 537,
-                y: 460
-            }
-        ];
-        danger = [
-            {
-                width: 100,
-                height: 20,
-                x: 200,
-                y: 400
+                x: 570,
+                y: 375
             },
+            {
+                width: 35,
+                height: 35,
+                x: 95,
+                y: 240
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 345,
+                y: 440
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 590,
+                y: 115
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 895,
+                y: 310
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 895,
+                y: 60
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 835,
+                y: 430
+            },
+            {
+                width: 35,
+                height: 35,
+                x: 345,
+                y: 310
+            },
+        ];
+        danger = [];
+        verticalDanger = [];
+        verticalMoveDanger = [
+            {
+                width: 50,
+                height: 50,
+                x: 200,
+                y: 150
+            },
+            {
+                width: 50,
+                height: 50,
+                x: 450,
+                y: 300
+            },
+            {
+                width: 50,
+                height: 50,
+                x: 700,
+                y: 450
+            },
+        ];
+        horizontalMoveDanger = [
+            {
+                width: 50,
+                height: 50,
+                x: 400,
+                y: 370
+            },
+            {
+                width: 50,
+                height: 50,
+                x: 900,
+                y: 170
+            }
         ];
         portal = [
             {
                 width: 70,
                 height: 100,
-                x: 735,
-                y: 200
+                x: 1130,
+                y: 480
+            }
+        ];
+        heart = [
+            {
+                width: 50,
+                height: 50,
+                x: 300,
+                y: 400
             }
         ];
 
@@ -279,34 +491,14 @@ let setLevel = function(lvl) {
     window.addEventListener("keyup", controller.KeyListener);
 }
 
-let controller = {
-    left: false,
-    right: false,
-    up: false,
-    KeyListener: function(evt) {
-        let keyState = (evt.type == "keydown") ? true : false;
-        switch (evt.keyCode) {
-            case 37:
-                controller.left = keyState;
-                break;
-            case 38:
-                controller.up = keyState;
-                break;
-            case 39:
-                controller.right = keyState;
-                break;
-        }
-    }
-};
-
-let startAnimation = function(fps) {
+function startAnimation(fps) {
     setLevel(currentLevel);
     fpsInterval = 1000 / fps;
     then = window.performance.now();
     animation(then);
 }
 
-let animation = function(newTime) {
+function animation(newTime) {
     window.requestAnimationFrame(animation);
     now = newTime;
     elapsed = now - then;
@@ -317,18 +509,14 @@ let animation = function(newTime) {
     }
 }
 
-let isCollided = function(obst, obj) {
-    if (obj.x + obj.width > obst.x
+function isCollided(obst, obj) {
+    return obj.x + obj.width > obst.x
         && obj.x < obst.x + obst.width
         && obj.y < obst.y + obst.height
-        && obj.y + obj.height > obst.y) {
-        return true;
-    } else {
-        return false;
-    }
+        && obj.y + obj.height > obst.y;
 }
 
-let collideHandler = function(obst, obj) {
+function collideHandler(obst, obj) {
     if (isCollided(obst, obj)) {
         if (obj.xPrev >= obst.x + obst.width) {
             obj.x = obst.x + obst.width;
@@ -350,36 +538,80 @@ let collideHandler = function(obst, obj) {
     }
 }
 
-let coinHandler = function (coin, obj) {
+function coinHandler(coin, obj) {
     if(isCollided(coin, obj)) {
         player.coins += 1;
         coin.x = -50;
     }
 }
 
-let portalHandler = function (portal, obj) {
+function heartHandler(heart, obj) {
+    if(isCollided(heart, obj)) {
+        lives += 1;
+        heart.x = -150;
+    }
+}
+
+function portalHandler(portal, obj) {
     if(isCollided(portal, obj)) {
         return player.portal += 1;
     }
 }
 
-let dangerHandler = function (danger, obj) {
+function dangerHandler(danger, obj) {
     if(isCollided(danger, obj)) {
-        alert('Игра проиграна');
-        currentLevel = 0;
-        setLevel(currentLevel);
+        if (lives > 1) {
+            lives -= 1;
+            setLevel(currentLevel);
+        }else {
+            currentLevel = 0;
+            lives = 3;
+            setLevel(currentLevel);
+        }
     }
 }
 
-let VdangerHandler = function (Vdanger, obj) {
-    if(isCollided(Vdanger, obj)) {
-        alert('Игра проиграна');
-        currentLevel = 0;
-        setLevel(currentLevel);
+function verticalDangerHandler(verticalDanger, obj) {
+    if(isCollided(verticalDanger, obj)) {
+        if (lives > 1) {
+            lives -= 1;
+            setLevel(currentLevel);
+        }else {
+            currentLevel = 0;
+            lives = 3;
+            setLevel(currentLevel);
+        }
+    }
+}
+function verticalMoveDangerHandler(verticalMoveDanger, obj) {
+    if(isCollided(verticalMoveDanger, obj)) {
+        if (lives > 1) {
+
+            lives -= 1;
+            setLevel(currentLevel);
+        }else {
+            currentLevel = 0;
+            lives = 3;
+            setLevel(currentLevel);
+        }
     }
 }
 
-let update = function () {
+function horizontalMoveDangerHandler(horizontalMoveDanger, obj) {
+    if(isCollided(horizontalMoveDanger, obj)) {
+        if (lives > 1) {
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            lives -= 1;
+            setLevel(currentLevel);
+        }else {
+            currentLevel = 0;
+            lives = 3;
+            setLevel(currentLevel);
+        }
+    }
+}
+
+function update() {
     player.xPrev = player.x;
     player.yPrev = player.y;
 
@@ -424,6 +656,10 @@ let update = function () {
         coinHandler(coins[i], player);
     }
 
+    for (let i = 0; i < heart.length; i++) {
+        heartHandler(heart[i], player);
+    }
+
     for (let i = 0; i < portal.length; i++) {
         portalHandler(portal[i], player);
     }
@@ -432,8 +668,16 @@ let update = function () {
         dangerHandler(danger[i], player);
     }
 
-    for (let i = 0; i < Vdanger.length; i++) {
-        VdangerHandler(Vdanger[i], player);
+    for (let i = 0; i < verticalDanger.length; i++) {
+        verticalDangerHandler(verticalDanger[i], player);
+    }
+
+    for (let i = 0; i < verticalMoveDanger.length; i++) {
+        verticalMoveDangerHandler(verticalMoveDanger[i], player);
+    }
+
+    for (let i = 0; i < horizontalMoveDanger.length; i++) {
+        horizontalMoveDangerHandler(horizontalMoveDanger[i], player);
     }
 
 
@@ -447,19 +691,19 @@ let update = function () {
             setLevel(currentLevel);
         }
     }
-
 }
 
-let drawObject = function(obj, style) {
+function drawObject(obj, style) {
     context.fillStyle = style;
     context.fillRect(obj.x, obj.y, obj.width, obj.height);
 }
 
-let draw = function() {
+function draw() {
     context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    context.fillStyle = '#000000';
+    context.fillStyle = '#75bbfd';
     context.fillRect(player.x, player.y, player.width, player.height);
+    context.drawImage(sprite, player.x, player.y, player.width, player.height)
 
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#654321');
@@ -474,6 +718,8 @@ let draw = function() {
     context.fillStyle = '#0000ff';
     context.font = 'normal 30px Arial';
     context.fillText(player.coins, 20, 50);
+    context.fillText(`Жизней осталось: ${lives}`, 900, 50);
+
 
     if (player.coins === target[currentLevel]) {
         for (let i = 0; i < portal.length; i++) {
@@ -481,20 +727,44 @@ let draw = function() {
             context.drawImage(darkPortal, portal[i].x, portal[i].y, portal[i].width, portal[i].height);
         }
     }
+
     for (let i = 0; i < danger.length; i++) {
         drawObject(danger[i], '#75bbfd');
         context.drawImage(dangerImg, danger[i].x, danger[i].y - 15, danger[i].width, danger[i].height + 15);
     }
 
-    for (let i = 0; i < Vdanger.length; i++) {
-        drawObject(Vdanger[i], '#75bbfd');
-        context.drawImage(vertdanger, Vdanger[i].x, Vdanger[i].y - 15, Vdanger[i].width, Vdanger[i].height + 15);
+    for (let i = 0; i < verticalDanger.length; i++) {
+        drawObject(verticalDanger[i], '#75bbfd');
+        context.drawImage(vertDanger, verticalDanger[i].x, verticalDanger[i].y - 15, verticalDanger[i].width, verticalDanger[i].height + 15);
     }
 
+    for (let i = 0; i < heart.length; i++) {
+        drawObject(heart[i], '#75bbfd');
+        context.drawImage(heartSprite, heart[i].x, heart[i].y, heart[i].width, heart[i].height);
+    }
+
+    for (let i = 0; i < verticalMoveDanger.length; i++) {
+        if (verticalMoveDanger[i].y < 560) {
+            drawObject(verticalMoveDanger[i], '#75bbfd');
+            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y += 7, verticalMoveDanger[i].width, verticalMoveDanger[i].height);
+        } else {
+            drawObject(verticalMoveDanger[i], '#75bbfd');
+            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y -= 600, verticalMoveDanger[i].width, verticalMoveDanger[i].height);
+        }
+    }
+
+    for (let i = 0; i < horizontalMoveDanger.length; i++) {
+
+        if (horizontalMoveDanger[i].x < 1150) {
+
+            drawObject(horizontalMoveDanger[i], '#75bbfd');
+            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x += 7, horizontalMoveDanger[i].y, horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
+        } else {
+
+            drawObject(horizontalMoveDanger[i], '#75bbfd');
+            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x -= 1200, horizontalMoveDanger[i].y, horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
+        }
+    }
 }
 
 startAnimation(FPS);
-
-
-
-
