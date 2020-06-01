@@ -10,6 +10,9 @@ let target = [9, 8];
 let player, obstacles, coins, heart, portal, danger, verticalDanger, horizontalMoveDanger, verticalMoveDanger;
 let then, now, elapsed, fpsInterval;
 let lives = 3;
+let num = 1;
+
+
 
 let dangerImg = new Image();
 dangerImg.src = './images/danger.png';
@@ -25,8 +28,8 @@ let vertMoveDanger = new Image();
 vertMoveDanger.src = './images/VMdangerImg.png';
 let heartSprite = new Image();
 heartSprite.src = './images/heart.png';
-let sprite = new Image();
-sprite.src = './images/sprite.png';
+let spriteList = new Image();
+spriteList.src = './images/spriteList.png';
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
@@ -689,10 +692,52 @@ function drawObject(obj, style) {
 
 function draw() {
     context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    function spriteMove(img, num) {
+        context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (controller.right === true){
+            setInterval(function () {
+                for (let i = 1; i < 5; i++){
+                    if (i < 5){
+                        num = i;
+                        console.log(num)
+                    }else{
+                        num = 1;
+                        console.log(num)
+                    }
+                }
+            }, 500);
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.fillStyle = '#75bbfd';
+            context.fillRect(player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180 * num, 0, 180, 290, player.x, player.y, player.width, player.height);
 
-    context.fillStyle = '#75bbfd';
-    context.fillRect(player.x, player.y, player.width, player.height);
-    context.drawImage(sprite, player.x, player.y, player.width, player.height);
+        }else {
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.drawImage(spriteList, 180, 0, 180, 290, player.x, player.y, player.width, player.height);
+        }
+        if (controller.left === true){
+            setInterval(function () {
+                for (let i = 1; i < 5; i++){
+                    if (i < 5){
+                        num = i;
+                        console.log(num)
+                    }else{
+                        num = 1;
+                        console.log(num)
+                    }
+                }
+            }, 500)
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.fillStyle = '#75bbfd';
+            context.fillRect(player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180 * num, 290, 180, 290, player.x, player.y, player.width, player.height);
+        }
+
+    }
+   spriteMove(spriteList, num);
+
+
+
 
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#654321');
