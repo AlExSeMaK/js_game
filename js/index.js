@@ -1,66 +1,35 @@
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
+const CANVAS_WIDTH = 1200;
+const CANVAS_HEIGHT = 600;
+const FPS = 60;
+
 let currentLevel = 0;
 let target = [9, 8];
-
 let player, obstacles, coins, heart, portal, danger, verticalDanger, horizontalMoveDanger, verticalMoveDanger;
-
-let CANVAS_WIDTH = 1200;
-let CANVAS_HEIGHT = 600;
-
-let FPS = 60;
-
 let then, now, elapsed, fpsInterval;
-
 let lives = 3;
 
 let dangerImg = new Image();
 dangerImg.src = './images/danger.png';
-
 let darkPortal = new Image();
 darkPortal.src = './images/portal.png';
-
 let bitcoin = new Image();
 bitcoin.src = './images/bitcoin.png';
-
 let vertDanger = new Image();
 vertDanger.src = './images/vertdanger.png';
-
 let ground = new Image();
 ground.src = './images/images.jpg';
-
 let vertMoveDanger = new Image();
 vertMoveDanger.src = './images/VMdangerImg.png';
-
 let heartSprite = new Image();
 heartSprite.src = './images/heart.png';
-
 let sprite = new Image();
 sprite.src = './images/sprite.png';
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
-
-let controller = {
-    left: false,
-    right: false,
-    up: false,
-    KeyListener: function(evt) {
-        let keyState = (evt.type === "keydown");
-        switch (evt.keyCode) {
-            case 37:
-                controller.left = keyState;
-                break;
-            case 38:
-                controller.up = keyState;
-                break;
-            case 39:
-                controller.right = keyState;
-                break;
-        }
-    }
-};
 
 function setLevel(lvl) {
     if (lvl === 0) {
@@ -491,6 +460,26 @@ function setLevel(lvl) {
     window.addEventListener("keyup", controller.KeyListener);
 }
 
+let controller = {
+    left: false,
+    right: false,
+    up: false,
+    KeyListener: function(evt) {
+        let keyState = (evt.type === "keydown");
+        switch (evt.keyCode) {
+            case 37:
+                controller.left = keyState;
+                break;
+            case 38:
+                controller.up = keyState;
+                break;
+            case 39:
+                controller.right = keyState;
+                break;
+        }
+    }
+};
+
 function startAnimation(fps) {
     setLevel(currentLevel);
     fpsInterval = 1000 / fps;
@@ -509,30 +498,30 @@ function animation(newTime) {
     }
 }
 
-function isCollided(obst, obj) {
-    return obj.x + obj.width > obst.x
-        && obj.x < obst.x + obst.width
-        && obj.y < obst.y + obst.height
-        && obj.y + obj.height > obst.y;
+function isCollided(levelObj, obj) {
+    return obj.x + obj.width > levelObj.x
+        && obj.x < levelObj.x + levelObj.width
+        && obj.y < levelObj.y + levelObj.height
+        && obj.y + obj.height > levelObj.y;
 }
 
-function collideHandler(obst, obj) {
-    if (isCollided(obst, obj)) {
-        if (obj.xPrev >= obst.x + obst.width) {
-            obj.x = obst.x + obst.width;
+function collideHandler(levelObj, obj) {
+    if (isCollided(levelObj, obj)) {
+        if (obj.xPrev >= levelObj.x + levelObj.width) {
+            obj.x = levelObj.x + levelObj.width;
             obj.xVelocity = 0;
         }
-        if (obj.xPrev + obj.width <= obst.x) {
-            obj.x = obst.x - obj.width;
+        if (obj.xPrev + obj.width <= levelObj.x) {
+            obj.x = levelObj.x - obj.width;
             obj.xVelocity = 0;
         }
-        if (obj.yPrev + obj.height <= obst.y) {
-            obj.y = obst.y - obj.height;
+        if (obj.yPrev + obj.height <= levelObj.y) {
+            obj.y = levelObj.y - obj.height;
             obj.yVelocity = 0;
             obj.jumping = false;
         }
-        if (obj.yPrev >= obst.y + obst.height) {
-            obj.y = obst.y + obst.height;
+        if (obj.yPrev >= levelObj.y + levelObj.height) {
+            obj.y = levelObj.y + levelObj.height;
             obj.yVelocity = 0;
         }
     }
@@ -703,7 +692,7 @@ function draw() {
 
     context.fillStyle = '#75bbfd';
     context.fillRect(player.x, player.y, player.width, player.height);
-    context.drawImage(sprite, player.x, player.y, player.width, player.height)
+    context.drawImage(sprite, player.x, player.y, player.width + 20, player.height + 10);
 
     for (let i = 0; i < obstacles.length; i++) {
         drawObject(obstacles[i], '#654321');
