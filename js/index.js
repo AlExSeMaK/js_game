@@ -698,18 +698,21 @@ function draw() {
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             context.fillStyle = '#75bbfd';
             context.fillRect(player.x, player.y, player.width, player.height);
-            context.drawImage(spriteList, 180 * num, 0, 180, 290, player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180 * num, 0, 180, 290, player.x, player.y, player.width,
+                player.height);
 
         }else {
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.drawImage(spriteList, 180, 0, 180, 300, player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180, 0, 180, 300, player.x, player.y, player.width,
+                player.height);
         }
         if (controller.left === true){
 
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             context.fillStyle = '#75bbfd';
             context.fillRect(player.x, player.y, player.width, player.height);
-            context.drawImage(spriteList, 180 * num, 290, 180, 310, player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180 * num, 290, 180, 310, player.x, player.y, player.width,
+                player.height);
         }
 
     }
@@ -749,7 +752,8 @@ function draw() {
 
     for (let i = 0; i < verticalDanger.length; i++) {
         drawObject(verticalDanger[i], '#75bbfd');
-        context.drawImage(vertDanger, verticalDanger[i].x, verticalDanger[i].y - 15, verticalDanger[i].width, verticalDanger[i].height + 15);
+        context.drawImage(vertDanger, verticalDanger[i].x, verticalDanger[i].y - 15, verticalDanger[i].width,
+            verticalDanger[i].height + 15);
     }
 
     for (let i = 0; i < heart.length; i++) {
@@ -760,10 +764,12 @@ function draw() {
     for (let i = 0; i < verticalMoveDanger.length; i++) {
         if (verticalMoveDanger[i].y < 560) {
             drawObject(verticalMoveDanger[i], '#75bbfd');
-            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y += 7, verticalMoveDanger[i].width, verticalMoveDanger[i].height);
+            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y += 7,
+                verticalMoveDanger[i].width, verticalMoveDanger[i].height);
         } else {
             drawObject(verticalMoveDanger[i], '#75bbfd');
-            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y -= 600, verticalMoveDanger[i].width, verticalMoveDanger[i].height);
+            context.drawImage(vertMoveDanger, verticalMoveDanger[i].x, verticalMoveDanger[i].y -= 600,
+                verticalMoveDanger[i].width, verticalMoveDanger[i].height);
         }
     }
 
@@ -772,11 +778,13 @@ function draw() {
         if (horizontalMoveDanger[i].x < 1150) {
 
             drawObject(horizontalMoveDanger[i], '#75bbfd');
-            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x += 7, horizontalMoveDanger[i].y, horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
+            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x += 7, horizontalMoveDanger[i].y,
+                horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
         } else {
 
             drawObject(horizontalMoveDanger[i], '#75bbfd');
-            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x -= 1200, horizontalMoveDanger[i].y, horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
+            context.drawImage(vertMoveDanger, horizontalMoveDanger[i].x -= 1200, horizontalMoveDanger[i].y,
+                horizontalMoveDanger[i].width, horizontalMoveDanger[i].height);
         }
     }
 }
