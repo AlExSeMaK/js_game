@@ -10,7 +10,7 @@ let target = [9, 8];
 let player, obstacles, coins, heart, portal, danger, verticalDanger, horizontalMoveDanger, verticalMoveDanger;
 let then, now, elapsed, fpsInterval;
 let lives = 3;
-let num = 1;
+let num = 0;
 
 
 
@@ -695,17 +695,6 @@ function draw() {
     function spriteMove(img, num) {
         context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         if (controller.right === true){
-            setInterval(function () {
-                for (let i = 1; i < 5; i++){
-                    if (i < 5){
-                        num = i;
-                        console.log(num)
-                    }else{
-                        num = 1;
-                        console.log(num)
-                    }
-                }
-            }, 500);
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             context.fillStyle = '#75bbfd';
             context.fillRect(player.x, player.y, player.width, player.height);
@@ -713,28 +702,19 @@ function draw() {
 
         }else {
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.drawImage(spriteList, 180, 0, 180, 290, player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180, 0, 180, 300, player.x, player.y, player.width, player.height);
         }
         if (controller.left === true){
-            setInterval(function () {
-                for (let i = 1; i < 5; i++){
-                    if (i < 5){
-                        num = i;
-                        console.log(num)
-                    }else{
-                        num = 1;
-                        console.log(num)
-                    }
-                }
-            }, 500)
+
             context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             context.fillStyle = '#75bbfd';
             context.fillRect(player.x, player.y, player.width, player.height);
-            context.drawImage(spriteList, 180 * num, 290, 180, 290, player.x, player.y, player.width, player.height);
+            context.drawImage(spriteList, 180 * num, 290, 180, 310, player.x, player.y, player.width, player.height);
         }
 
     }
-   spriteMove(spriteList, num);
+
+    spriteMove(spriteList, num);
 
 
 
